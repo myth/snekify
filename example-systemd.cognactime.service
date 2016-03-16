@@ -1,0 +1,14 @@
+[Service]
+ExecStart=/usr/bin/node /path/to/snekify/index.js
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=snekify
+WorkingDirectory=/path/to/snekify
+User=user
+Group=user
+Environment=NODE_ENV=production
+ 
+[Install]
+WantedBy=multi-user.target
+
