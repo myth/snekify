@@ -49,7 +49,13 @@ var snekify = function (lines, url) {
         } else {
             line = line.replace(href, 'href="/?url=' + scheme + domain + '/')
         }
-        line = line.replace(src, 'src="' + scheme + domain + '/')
+        if (line.indexOf('img src') > -1) {
+            start = line.indexOf('<img')
+            end = line.indexOf('>')
+            line = line.substr(0, start) + '<img src="http://2static4.fjcdn.com/comments/Snek+spell+it+right+_12de0f65ccac6fde4848a7d5de327e7e.jpg" />' + line.substr(end+1, line.length)
+        } else {
+            line = line.replace(src, 'src="' + scheme + domain + '/')
+        }
         line = line.replace(me, ' da snek ')
         line = line.replace(my, " da snek's ")
         line = line.replace(we, ' us sneks ')
