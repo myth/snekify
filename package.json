@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/myth/snekify#readme",
   "dependencies": {
+    "concat-stream": "^1.5.1",
     "express": ">4.13.0",
     "morgan": ">1.6.0",
     "request": ">2.58.0",

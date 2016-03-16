@@ -6,26 +6,70 @@
 
 var fs =            require('fs')
 ,   express =       require('express')
+,   request =       require('request')
+,   concat =        require('concat-stream')
 ,   log =           require('./logging')
 ,   pkg =           require('../package.json')
 ,   config =        require('../config.json')
-,   routes =        require('../routes/core')
 ,   path =          require('path')
 
+var snekify = function (lines, url) {
+    lines = lines.toString('utf8')
+    lines = lines.split('\n')
+    var output = ''
+    for (var i = 0; i < lines.length; i++) {
+        var me = /(\si\s|\sI\s|\sme\s)/gi
+        var my = /(\smy\s)/gi
+        var we = /(\swe\s|\svi\s)/gi
+        var they = /(\sthem\s|they\s)/gi
+        var you = /(\syou\s|\sdere\s)/gi
+        var your = /(\syour\s|\sderes\s)/gi
+        var href = /(href="\/)/gi
+        var src = /(src="\/)/gi
+
+        line = lines[i]
+        line = line.replace(href, 'href="http://' + url.substr(0, url.indexOf('/') < 0 ? url.length : url.indexOf('/')) + '/')
+        line = line.replace(src, 'src="http://' + url.substr(0, url.indexOf('/') < 0 ? url.length : url.indexOf('/')) + '/')
+        line = line.replace(me, ' da snek ')
+        line = line.replace(my, " da snek's ")
+        line = line.replace(we, ' us sneks ')
+        line = line.replace(they, ' dem sneks ')
+        line = line.replace(you, ' u sneks ')
+        line = line.replace(your, " u snek's ")
+
+        output += line
+    }
+
+    return output
+}
+
 // Initialize the express app
-ct = express()
+snek = express()
 
 // Set logging middleware
-ct.use(require('morgan')('combined', {'stream': log.stream}))
+snek.use(require('morgan')('combined', {'stream': log.stream}))
 
 // Set static
-ct.use('/static', express.static('public'))
+snek.get('/', function (req, res, next) {
+    if (req.query.url === undefined || req.query.url === null) {
+        res.send('<!DOCTYPE html><html><body>Usage: <a href="/?url=hakloev.no">https://snek.ify.no/?url=hakloev.no</a></body></html>')
+    } else {
+        var url = req.query.url 
+        write = concat(function(completeResponse) {
+            var finalResponse = snekify(completeResponse, url)
+            res.end(finalResponse)
+        })
 
-// Set core routes
-ct.use('/', routes)
+        request('http://' + url)
+        .on('error', function (err) {
+            res.end('Error')
+        })
+        .pipe(write)
+    }
+})
 
 // Lets drink some Cognac and watch documentaries...
-server = ct.listen(config.port, config.host, function () {
+server = snek.listen(config.port, config.host, function () {
 
   var host = server.address().address
   var port = server.address().port
