@@ -31,13 +31,15 @@ var snekify = function (lines, url) {
     
     for (var i = 0; i < lines.length; i++) {
         var me = /(\si\s|\sI\s|\sme\s)/gi
-        var my = /(\smy\s)/gi
+        var my = /(\smy\s|\smitt\s)/gi
         var we = /(\swe\s|\svi\s)/gi
         var they = /(\sthem\s|they\s)/gi
         var you = /(\syou\s|\sdere\s)/gi
         var your = /(\syour\s|\sderes\s)/gi
         var href = /(href="\/)/gi
         var src = /(src="\/)/gi
+        var hvis = /(\sif\s|\shvis\s)/gi
+        var when = /(\snår\s|\swhen\s)/gi
        
         console.log(scheme)
         console.log(url)
@@ -57,6 +59,8 @@ var snekify = function (lines, url) {
             line = line.replace(src, 'src="' + scheme + domain + '/')
         }
         line = line.replace(me, ' da snek ')
+        line = line.replace(hvis, ' if it is the will of da snek ')
+        line = line.replace(when, ' when da snek decends from the heavens and ')
         line = line.replace(my, " da snek's ")
         line = line.replace(we, ' us sneks ')
         line = line.replace(they, ' dem sneks ')
