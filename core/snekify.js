@@ -17,6 +17,18 @@ var snekify = function (lines, url) {
     lines = lines.toString('utf8')
     lines = lines.split('\n')
     var output = ''
+
+    var scheme = 'http://'
+    if (url.indexOf('https') > -1) {
+        var request = url.replace('https://', '')
+        var scheme = 'https://'
+    }
+    else if (url.indexOf('http') > -1) {
+        var request = url.replace('http://', '')
+    }
+    var domain = request.replace(scheme, '')
+    domain = domain.substr(0, domain.indexOf('/') > -1 ? domain.indexOf('/') : domain.length)
+    
     for (var i = 0; i < lines.length; i++) {
         var me = /(\si\s|\sI\s|\sme\s)/gi
         var my = /(\smy\s)/gi
@@ -26,10 +38,18 @@ var snekify = function (lines, url) {
         var your = /(\syour\s|\sderes\s)/gi
         var href = /(href="\/)/gi
         var src = /(src="\/)/gi
+       
+        console.log(scheme)
+        console.log(url)
+        console.log(domain)
 
         line = lines[i]
-        line = line.replace(href, 'href="http://' + url.substr(0, url.indexOf('/') < 0 ? url.length : url.indexOf('/')) + '/')
-        line = line.replace(src, 'src="http://' + url.substr(0, url.indexOf('/') < 0 ? url.length : url.indexOf('/')) + '/')
+        if (line.indexOf('rel="stylesheet"') > -1) {
+            line = line.replace(href, 'href="' + scheme + domain + '/')
+        } else {
+            line = line.replace(href, 'href="/?url=' + scheme + domain + '/')
+        }
+        line = line.replace(src, 'src="' + scheme + domain + '/')
         line = line.replace(me, ' da snek ')
         line = line.replace(my, " da snek's ")
         line = line.replace(we, ' us sneks ')
@@ -52,15 +72,16 @@ snek.use(require('morgan')('combined', {'stream': log.stream}))
 // Set static
 snek.get('/', function (req, res, next) {
     if (req.query.url === undefined || req.query.url === null) {
-        res.send('<!DOCTYPE html><html><body>Usage: <a href="/?url=hakloev.no">https://snek.ify.no/?url=hakloev.no</a></body></html>')
+        res.send('<!DOCTYPE html><html><body>Usage: <a href="/?url=https://hakloev.no">https://snek.ify.no/?url=https://hakloev.no</a></body></html>')
     } else {
-        var url = req.query.url 
+        var self = this
+        self.url = req.query.url
         write = concat(function(completeResponse) {
-            var finalResponse = snekify(completeResponse, url)
+            var finalResponse = snekify(completeResponse, self.url)
             res.end(finalResponse)
         })
 
-        request('http://' + url)
+        var r = request(self.url)
         .on('error', function (err) {
             res.end('Error')
         })
