@@ -6,14 +6,10 @@
   "os": "linux",
   "scripts": {
     "start": "node ./",
-    "build": "echo \"Building snekify...\" && npm run build-js && npm run build-less",
+    "build": "echo \"Building snekify...\"",
     "deploy": "echo \"Deployed\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "npm run watch-js & npm run watch-less & nodemon --ignore 'client/*' --ignore 'public/*' --ignore 'logs/*' index.js",
-    "build-js": "./node_modules/browserify/bin/cmd.js ./client/client.js | ./node_modules/uglifyjs/bin/uglifyjs -o ./public/js/snekify.min.js",
-    "build-less": "./node_modules/less/bin/lessc ./client/less/client.less | ./node_modules/clean-css/bin/cleancss -d -o ./public/css/snekify.min.css",
-    "watch-js": "./node_modules/nodemon/bin/nodemon.js -e js -w ./client -x 'npm run build-js'",
-    "watch-less": "./node_modules/nodemon/bin/nodemon.js -e less -w ./client/less -x 'npm run build-less'"
+    "watch": "nodemon --ignore 'client/*' --ignore 'public/*' --ignore 'logs/*' index.js"
   },
   "repository": {
     "type": "git",
@@ -33,15 +29,12 @@
   },
   "homepage": "https://github.com/myth/snekify#readme",
   "dependencies": {
-    "body-parser": "^1.13.1",
-    "express": "^4.13.0",
-    "morgan": "^1.6.0",
-    "request": "^2.58.0",
-    "winston": "^1.0.1"
+    "express": ">4.13.0",
+    "morgan": ">1.6.0",
+    "request": ">2.58.0",
+    "winston": ">1.0.1"
   },
   "devDependencies": {
-    "browserify": "^10.2.4",
-    "clean-css": "^3.3.5",
     "less": "^2.5.1",
     "nodemon": "^1.3.7",
     "uglifyjs": "^2.4.10"
